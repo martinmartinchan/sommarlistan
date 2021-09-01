@@ -49,34 +49,36 @@ const ItemForm = ({ item, setDone, setData }) => {
 }
 
   const deleteItem = () => {
-    const { _id } = item
-    setIsLoading(true)
-    fetch('https://75usikij68.execute-api.eu-north-1.amazonaws.com/default/sommarlistan',
-    {
-      method: 'DELETE',
-      body: JSON.stringify({ id: _id }),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    })
-    .then(() => {
-      fetchData(setData)
-        .then(() => {
-          setIsLoading(false)
-          setDone()
+    if (confirm(`Säker på att du vill ta bort "${item.name}"?`)) {
+      const { _id } = item
+      setIsLoading(true)
+      fetch('https://75usikij68.execute-api.eu-north-1.amazonaws.com/default/sommarlistan',
+        {
+          method: 'DELETE',
+          body: JSON.stringify({ id: _id }),
+          headers: {
+            'Content-Type': 'application/json'
+          },
         })
-    })
-    .catch((e) => {
-      setIsLoading(false)
-      toast({
-      position: "top",
-      title: "Kunde inte ta bort!",
-      description: "Ingen anin varför lol",
-      status: "error",
-      duration: 3000,
-      isClosable: true,
-    })
-  })
+        .then(() => {
+          fetchData(setData)
+            .then(() => {
+              setIsLoading(false)
+              setDone()
+            })
+        })
+        .catch((e) => {
+          setIsLoading(false)
+          toast({
+          position: "top",
+          title: "Kunde inte ta bort!",
+          description: "Ingen aning varför lol",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        })
+      })
+    }
 }
 
   return isLoading 
@@ -84,6 +86,7 @@ const ItemForm = ({ item, setDone, setData }) => {
     : <Box>
     <Flex>
       <Input
+        mr='1rem'
         value={ name }
         onChange={ (e) => setName(e.target.value) }
       />
